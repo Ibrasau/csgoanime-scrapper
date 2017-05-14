@@ -7,3 +7,7 @@ cd csgoanime-scrapper
 node ./scrapper.js 
 ```
 Scrapped *.webm files will appear in ./scrapped directory.
+
+To do:
+1. getopt for an interval
+2. fix async webms fetching (interruption may create defective file)
