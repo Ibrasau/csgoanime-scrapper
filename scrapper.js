@@ -20,6 +20,7 @@ const webmLoader = async (id) => {
                 res.pipe(stream);
                 res.on('end', (data) => {
                     console.info(`${id}.webm has been successfully downloaded`);
+                    stream.end();
                 });
             }, (err) => {
                 console.error(`Error while downloading file ${id}.webm. Error code: ${err.code}`);
