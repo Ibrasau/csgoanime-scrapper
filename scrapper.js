@@ -4,32 +4,36 @@ const http = require('http');
 
 const webmLoader = async (id) => {
     const webmId = id.slice(1);
-    const path = `/uploads/${webmId}.webm`;
-    const file = fs.createWriteStream(`./scrapped/${webmId}.webm`);
+    const file = `./scrapped/${id}.webm`;
 
-    await http.get({
-        host: 'storage.csgoani.me',
-        path,
-        method: 'GET',
-        headers: {
-            'Referer': `http://csgoani.me/${webmId}`,
-        }
-    }, (res) => {
-        res.pipe(file);
-        res.on('end', (data) => {
-            console.info(`${webmId}.webm has been successfully downloaded`);
-        });
-    }, (err) => {
-        console.error(`Error while downloading file ${webm}.webm. Error code: ${err.code}`);
-    })
+    fs.access(file, (err) => {
+        if (err) {
+            const stream = fs.createWriteStream(file);
+            http.get({
+                host: 'storage.csgoani.me',
+                path: `/uploads/${webmId}.webm`,
+                method: 'GET',
+                headers: {
+                    'Referer': `http://csgoani.me/${webmId}`,
+                }
+            }, (res) => {
+                res.pipe(stream);
+                res.on('end', (data) => {
+                    console.info(`${id}.webm has been successfully downloaded`);
+                });
+            }, (err) => {
+                console.error(`Error while downloading file ${id}.webm. Error code: ${err.code}`);
+            });
+        } else console.warn(`Ooops, ${id}.webm had been already downloaded!`);
+    });
 };
 
 const getWebm = () => {
     http.get({ host: 'csgoani.me' }, (res) => {
         res.setEncoding('utf8');
-        const webmId = res.headers.location.match(/\w+$/g)[0];
-        console.info(`Loading ${webmId}.webm...`);
-        webmLoader(webmId);
+        const id = res.headers.location.match(/\w+$/g)[0];
+        console.info(`Loading ${id}.webm...`);
+        webmLoader(id);
     }, (err) => {
         console.error(`Error while fetching data. Error code: ${err.code}`);
     });
