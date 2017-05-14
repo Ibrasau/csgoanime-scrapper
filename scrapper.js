@@ -47,7 +47,7 @@ const scrapperStart = () => {
 
 fs.access('./scrapped', fs.constants.R_OK | fs.constants.W_OK, (err) => {
     if (err) {
-        fs.mkdir('./scrapped', fs.constants.R_OK | fs.constants.W_OK, (err) => {
+        fs.mkdir('./scrapped', (err) => {
             if (err) {
                 console.error(`Couldn't create a directory, try to execute this script with RW permissions. Error code: ${err.code}`);
                 return err.code;
